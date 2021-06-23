@@ -1,17 +1,26 @@
 @extends('master')
-@section('content')
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>ویرایش دسته بندی</h1>
-                    </div>
+@section('title')ویرایش دسته بندی @endsection
+@section('pagehead')
+    <div class="card-header d-flex justify-content-between">
 
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
+        <div>
+            <span >دسته بندی ها ></span>
+            @if($parenttitles!=null)
+                @foreach($parenttitles as $parenttitle)
+                    &nbsp;{{$parenttitle}}&nbsp;></>
+                @endforeach
+            @endif
+            @if($parent!=null)
+                <span>&nbsp;{{$parent->title}}&nbsp;></span>
+            @endif
+        </div>
+    </div>
+@endsection
+
+@section('content')
+{{--    <div class="content-wrapper">--}}
+        <!-- Content Header (Page header) -->
+
 
         <!-- Main content -->
         <section class="content">
@@ -48,12 +57,13 @@
                                         </textarea>
                                     </div>
                                     @if(isset($category->image))
-                                        <div class="d-flex mb-5 align-items-center justify-content-around">
+                                        <div class="d-flex mb-5 align-items-center justify-content-around" id="{{$category->id}}">
                                             <div >
                                                 <img src="{{asset($category->image)}}" style="width:30vh;height:30vh">
                                             </div>
                                             <div>
-                                                <button type="button" class="btn btn-danger"><i class="fa fa-trash"></i></button>
+                                                <button type="button" class="btn btn-danger btn-sm" id="deleteimagebtn"
+                                                data-value="{{$category->id}}"><i class="fa fa-trash"></i></button>
 
                                             </div>
 
@@ -93,5 +103,6 @@
             </div><!-- /.container-fluid -->
         </section>
         <!-- /.content -->
-    </div>
+{{--    </div>--}}
+
 @endsection

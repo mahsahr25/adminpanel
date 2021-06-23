@@ -1,19 +1,22 @@
 @extends('master')
+@section('title')افزودن دسته بندی @endsection
+
 @section('content')
     <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
             <div class="container-fluid">
                 <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>افزودن دسته بندی</h1>
-                    </div>
-{{--                    <div class="col-sm-6">--}}
-{{--                        <ol class="breadcrumb float-sm-left">--}}
-{{--                            <li class="breadcrumb-item"><a href="#">خانه</a></li>--}}
-{{--                            <li class="breadcrumb-item active">فرم‌های عمومی</li>--}}
-{{--                        </ol>--}}
-{{--                    </div>--}}
+
+                        <span >افزودن دسته بندی ></span>
+                        @if($parenttitles!=null)
+                            @foreach($parenttitles as $parenttitle)
+                                <span>&nbsp;{{$parenttitle}}&nbsp;></span>
+                            @endforeach
+                        @endif
+                        @if($parent!=null)
+                            <span>&nbsp;{{$parent->title}}&nbsp;></span>
+                        @endif
                 </div>
             </div><!-- /.container-fluid -->
         </section>

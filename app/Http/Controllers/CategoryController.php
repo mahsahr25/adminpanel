@@ -14,12 +14,33 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($categoryid)
+    public function index($parentid)
     {
 //        dd($categoryid);
-            $categories=Category::where('parent_id',$categoryid)->get();
+            $categories=Category::where('parent_id',$parentid)->get();
+//            dd($categories);
+            if($parentid>0){
+                $parent=Category::findOrFail($parentid);
+//                dd($parent->path);
+                if($parent->path!=null){
+                    $trees=explode(',',$parent->path);
+//                dd($trees);
+                    foreach ($trees as $tree){
+                        $parenttitles[$tree]=Category::findOrFail($tree)->title;
+                    }
+//                    dd($parenttitles);
 
-        return view('categories.allcategories',compact(['categories']));
+                }else{
+                    $parenttitles=null;
+
+                }
+
+            }else{
+                $parenttitles=null;
+                $parent=null;
+            }
+
+        return view('categories.allcategories',compact(['categories','parentid','parenttitles','parent']));
     }
 
     /**
@@ -30,7 +51,25 @@ class CategoryController extends Controller
     public function create($categoryid)
     {
 //        dd($categoryid);
-        return view('categories.createcategory',compact(['categoryid']));
+        if($categoryid>0){
+            $parent=Category::findOrFail($categoryid);
+//                dd($parent->path);
+            if($parent->path!=null){
+                $trees=explode(',',$parent->path);
+//                dd($trees);
+                foreach ($trees as $tree){
+                    $parenttitles[$tree]=Category::findOrFail($tree)->title;
+                }
+            }else{
+                $parenttitles=null;
+
+            }
+
+        }else{
+            $parenttitles=null;
+            $parent=null;
+        }
+        return view('categories.createcategory',compact(['categoryid','parenttitles','parent']));
     }
 
     /**
@@ -47,9 +86,13 @@ class CategoryController extends Controller
         $request->validate([
            'title'=>'required',
            'description'=>'nullable|string|max:100',
-           'image'=>'required|mimes:jpg,png|max:300',
+           'image'=>'nullable|mimes:jpg,png|max:300',
         ]);
-        $imagepath=$this->upload($request->file('image'));
+        if(isset($request->image)){
+            $imagepath=$this->upload($request->file('image'));
+        }else{
+            $imagepath=null;
+        }
 
 //        === depth ====
         if($categoryid==0){
@@ -99,11 +142,29 @@ class CategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($categoryid)
     {
-        $category=Category::findOrFail($id);
+        $category=Category::findOrFail($categoryid);
+        if($categoryid>0){
+            $parent=Category::findOrFail($categoryid);
+//                dd($parent->path);
+            if($parent->path!=null){
+                $trees=explode(',',$parent->path);
+//                dd($trees);
+                foreach ($trees as $tree){
+                    $parenttitles[$tree]=Category::findOrFail($tree)->title;
+                }
+            }else{
+                $parenttitles=null;
+
+            }
+
+        }else{
+            $parenttitles=null;
+            $parent=null;
+        }
 //        dd($category);
-        return view('categories.editcategory',compact(['category']));
+        return view('categories.editcategory',compact(['category','categoryid','parenttitles','parent']));
     }
 
     /**
@@ -127,8 +188,11 @@ class CategoryController extends Controller
             'image'=>'mimes:jpg,png|max:300',
         ]);
         if(isset($request->image)){
-//            return "yes";
-            unlink(public_path($category->image));
+            if($category->image!=null){
+                unlink(public_path($category->image));
+
+            }
+
             $imagepath=$this->upload($request->file('image'));
             $category->image=$imagepath;
         }
@@ -152,5 +216,15 @@ class CategoryController extends Controller
     {
        $category=Category::findOrFail($id)->delete();
 //        dd($category);
+    }
+    public function deleteimage(){
+        $categoryid=$_GET['categoryid'];
+//        dd($categoryid);
+        $category=Category::findOrFail($categoryid);
+        unlink(public_path($category->image));
+        $category->image=null;
+        $category->save();
+        return response(['status'=>'ok']);
+
     }
 }

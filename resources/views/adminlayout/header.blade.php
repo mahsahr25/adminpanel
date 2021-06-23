@@ -185,7 +185,7 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{url('categories/index/'.$categoryid=0)}}" class="nav-link active">
+                                <a href="{{url('categories/index/'.$parentid=0)}}" class="nav-link active">
                                     <i class="fa fa-circle-o nav-icon"></i>
                                     <p> دسته بندی ها</p>
                                 </a>

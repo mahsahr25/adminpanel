@@ -21,6 +21,7 @@ use App\User;
 Route::get('/',function(){
    return view('adminhome');
 });
+Route::get('categories/deleteimage','CategoryController@deleteimage')->name('categories.deleteimage');
 Route::resource('categories','CategoryController')->except(['index']);
 
 Route::get('categories/index/{category}','CategoryController@index')->name('categories.index');
